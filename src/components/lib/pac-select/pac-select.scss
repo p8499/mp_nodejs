@@ -1,0 +1,42 @@
+div.pac-select {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: stretch;
+  align-items: center;
+
+  /*输入框label*/
+  > label {
+    > span {
+      display: inline-block;
+      text-align: start;
+      width: 120px;
+      font-size: 11px;
+      color: #454545;
+      white-space: nowrap;
+
+      &.no-label {
+        display: none;
+      }
+    }
+  }
+
+  /*输入框*/
+  > select {
+    width: 130px;
+    height: 20px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #aeb4bd #e0e3e8 #e0e3e8 #aeb4bd;
+
+    font-size: 8pt;
+
+    &.right {
+      text-align: right;
+    }
+
+    &.error {
+      border-color: rgb(255, 0, 0);
+    }
+  }
+}

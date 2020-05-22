@@ -1,0 +1,61 @@
+/*pac-menu组件*/
+div.pac-menu {
+  width: fit-content;
+  position: relative;
+
+  li {
+    width: auto;
+    padding-left: 16px;
+    padding-right: 16px;
+    position: relative;
+    background-color: white;
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+
+    &:hover {
+      background-color: #ebeced;
+    }
+
+    span {
+      display: block;
+      color: #000000;
+      font-size: 12px;
+      line-height: 28px;
+      text-align: left;
+      white-space: nowrap;
+      flex-grow: 1;
+      align-self: center;
+    }
+
+    img {
+      display: block;
+      align-self: center;
+      margin-left: 12px;
+      content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAHCAIAAACgB3uHAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAkSURBVBhXY2RgYPj//z+QBAIQBwjgfChA5yMAUAZFD5JpDAwAFkAR882UP/IAAAAASUVORK5CYII=");
+    }
+
+    &.disabled {
+      span {
+        color: grey;
+      }
+    }
+  }
+
+  ul {
+    display: none;
+    position: absolute;
+    left: 100%; /*calc(100% - 8px);*/
+    top: 0;
+    width: fit-content;
+    margin: 0;
+    box-shadow: 1px 1px 4px #c0c4cc;
+    padding: 0;
+    /*background-color: white;*/
+    list-style: none;
+  }
+}
+

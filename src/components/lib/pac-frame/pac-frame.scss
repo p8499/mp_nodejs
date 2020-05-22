@@ -1,0 +1,28 @@
+div.pac-frame {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: start;
+  align-items: start;
+
+  > span {
+    color: #252525;
+    font-weight: bold;
+    font-size: 11px;
+  }
+
+  > div {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #dfe4e7;
+    border-radius: 7px;
+    background-color: white;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: start;
+    align-items: start;
+    padding: 14px 14px 14px 14px;
+  }
+}

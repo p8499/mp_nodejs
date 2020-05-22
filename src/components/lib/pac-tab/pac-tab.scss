@@ -1,0 +1,148 @@
+/*pac-tab组件*/
+div.pac-tab {
+  box-sizing: border-box;
+  width: auto;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: start;
+  align-items: stretch;
+
+  //section 1
+  > :nth-child(1) {
+    width: auto;
+    height: fit-content;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+
+    //tab-heads
+    > :nth-child(1) {
+      width: auto;
+      height: fit-content;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: start;
+      align-items: center;
+      overflow: hidden;
+
+      //tab-head
+      > div {
+        flex-shrink: 0;
+        display: inline;
+        border-top: 3px solid transparent;
+        border-right: 1px solid transparent;
+        border-left: 1px solid transparent;
+        border-bottom: 1px solid transparent;
+        padding: 2px 8px 2px 8px;
+        width: fit-content;
+        height: fit-content;
+        color: #145c9e;
+        cursor: pointer;
+
+        > span {
+          font-size: 11px;
+          font-weight: bold;
+          color: #145c9e;
+        }
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      //tab-head 选中
+      > div.pac-tab-selected {
+        border-top: 3px solid #0572ce;
+        border-right: 1px solid #c4ced7;
+        border-left: 1px solid #c4ced7;
+        border-bottom: 1px solid #ebf2fc;
+        background-color: white;
+        cursor: default;
+
+        &:hover {
+          text-decoration: none;
+        }
+      }
+
+      //tab-head 禁用
+      > div.pac-tab-disabled {
+        color: grey;
+        cursor: default;
+
+        > span {
+          color: grey;
+        }
+
+        &:hover {
+          text-decoration: none;
+        }
+      }
+    }
+
+    //scroll
+    > :nth-child(2) {
+      width: fit-content;
+      height: fit-content;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+
+      /*按钮*/
+      > img {
+        margin: 2px;
+        border: 1px solid #c4ced7;
+        border-radius: 2px;
+        background-color: white;
+        cursor: pointer;
+
+        &:hover {
+          border: 1px solid #c4ced7;
+        }
+      }
+
+      /*scroll-to-left按钮*/
+      > img:first-of-type {
+        content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB94DChYpCwfC1OoAAABjSURBVDjL7dOxDcAgDATAB0bxLD+XPRos8qskDUUqBAoNEt8anWwsAzdnh6ST9NGbvIIBCABpV2cPyTgfy7sXV0ZFSc3MEgA3M0hqv8CO1o7GDFpmxlhBy+zffNAkqd4zPygvSN8w9FkAR0AAAAAASUVORK5CYII=");
+
+        &:hover {
+          content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB94DChYpGm1y9BgAAABLSURBVDjLY2AYBUMbsBadq2ctOlePTw0TKYYxMDA0MDAwMFLLZf9Zi841DH3DmAYiZhugrqwfHoYSHYa/+4waGBgYGqmSDkcBfQEAJj0rXwPUWb0AAAAASUVORK5CYII=");
+        }
+      }
+
+      /*scroll-to-right按钮*/
+      > img:last-of-type {
+        content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB94DChYnBAn+5PUAAABxSURBVDjL5dNBCsAgDATA1b9tvmX6LT+XXoS20moj9lIDHkQckkWB5SqcN2Y2hoSDibM7bIIioiKi00AABiB50UuG9SKZSBpJvTtv5v50oYe6wYJqQVMLjJ8+ypHu3CP3MBf4BvNmaAA057z95y8vWDth++9tBkbfVgAAAABJRU5ErkJggg==");
+
+        &:hover {
+          content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB94DChYoIlxrfccAAABKSURBVDjLY2AYBUMLsBada2AtOtdAih4mAvL/GRgY6kk1lJAr61mLzv0fEoY2QA2tpyQMaRrbBF03NAwjJh02/O4zahzN5kMYAACMWS1dXoAUEQAAAABJRU5ErkJggg==");
+        }
+      }
+    }
+  }
+
+  //section 2
+  > :nth-child(2) {
+    flex-grow: 1;
+    flex-shrink: 1;
+    overflow: auto;
+    background-color: white;
+    border: 1px solid #c4ced7;
+    border-radius: 0 7px 7px 7px;
+
+    //tab-content
+    > div {
+      height: fit-content;
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      justify-content: start;
+      align-items: start;
+      padding: 14px 14px 14px 14px;
+    }
+  }
+}
