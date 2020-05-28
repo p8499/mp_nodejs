@@ -43,7 +43,7 @@
             try {
                 const {user} = await addUser(this.user);
                 this.user = user;
-                await this.$router.replace({path: `user-update/${this.user.usid}?uuid=${uuid()}`}, () => undefined, () => undefined);
+                await this.$router.replace({path: `/user-update/${this.user.usid}?uuid=${uuid()}`}, () => undefined, () => undefined);
             } catch (e) {
                 this.errorsModel.set(new PacErrorObj('add', {
                     subject: '远程服务器错误',

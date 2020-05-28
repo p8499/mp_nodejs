@@ -82,7 +82,7 @@ async function updateRolePrivilegeSafely(bean: RolePrivilege, mask?: RolePrivile
 }
 
 async function batchUpdateRolePrivilege(beans: Array<RolePrivilege>, mask?: RolePrivilegeMask): Promise<Array<{ statusCode: number; rolePrivilege: (RolePrivilege) }>> {
-  return await Promise.all(beans.map((v) => updateRolePrivilegeSafely(v)));
+  return await Promise.all(beans.map((v) => updateRolePrivilegeSafely(v, mask)));
 }
 
 async function deleteRolePrivilege(key: { rpid: number }): Promise<{ statusCode: number; key: { rpid: number } }> {
@@ -147,7 +147,39 @@ async function countRolePrivilege(options: {filter?: FilterLogicExpr}): Promise<
   throw new ServerError(response.status);
 }
 
-// todo attachments
+function downloadRolePrivilegeAttachment(
+  key: { rpid: number },
+  name?: string, uuid?: string,
+): string {
+  const dict = Object();
+  dict.name = name;
+  dict.uuid = uuid;
+  return `${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.rpid.toString()}${parameters(dict)}`;
+}
+
+async function uploadRolePrivilegeAttachment(
+  key: { rpid: number },
+  buffer: ArrayBuffer, name?: string,
+): Promise<{ statusCode: number; key: { rpid: number }; name?: string }> {
+  const dict = Object();
+  dict.name = name;
+  const response = await fetch(`${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.rpid.toString()}${parameters(dict)}`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/octet-stream' },
+    body: buffer,
+  });
+  if (response.status < 400) {
+    return {
+      statusCode: response.status,
+      key,
+      name,
+    };
+  }
+  throw new ServerError(response.status);
+}
+
+
 export {
   PATH,
   LIST_PATH,
@@ -164,4 +196,6 @@ export {
   batchDeleteRolePrivilege,
   queryRolePrivilege,
   countRolePrivilege,
+  downloadRolePrivilegeAttachment,
+  uploadRolePrivilegeAttachment,
 };

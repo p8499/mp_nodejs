@@ -38,7 +38,7 @@
             try {
                 const {role} = await addRole(this.role);
                 this.role = role;
-                await this.$router.replace({path: `role-update/${this.role.roid}?uuid=${uuid()}`}, () => undefined, () => undefined);
+                await this.$router.replace({path: `/role-update/${this.role.roid}?uuid=${uuid()}`}, () => undefined, () => undefined);
             } catch (e) {
                 this.errorsModel.set(new PacErrorObj('add', {
                     subject: '远程服务器错误',

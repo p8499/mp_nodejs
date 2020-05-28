@@ -82,7 +82,7 @@ async function updateUserSafely(bean: User, mask?: UserMask): Promise<{ statusCo
 }
 
 async function batchUpdateUser(beans: Array<User>, mask?: UserMask): Promise<Array<{ statusCode: number; user: (User) }>> {
-  return await Promise.all(beans.map((v) => updateUserSafely(v)));
+  return await Promise.all(beans.map((v) => updateUserSafely(v, mask)));
 }
 
 async function deleteUser(key: { usid: number }): Promise<{ statusCode: number; key: { usid: number } }> {
@@ -147,7 +147,39 @@ async function countUser(options: {filter?: FilterLogicExpr}): Promise<{ statusC
   throw new ServerError(response.status);
 }
 
-// todo attachments
+function downloadUserAttachment(
+  key: { usid: number },
+  name?: string, uuid?: string,
+): string {
+  const dict = Object();
+  dict.name = name;
+  dict.uuid = uuid;
+  return `${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.usid.toString()}${parameters(dict)}`;
+}
+
+async function uploadUserAttachment(
+  key: { usid: number },
+  buffer: ArrayBuffer, name?: string,
+): Promise<{ statusCode: number; key: { usid: number }; name?: string }> {
+  const dict = Object();
+  dict.name = name;
+  const response = await fetch(`${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.usid.toString()}${parameters(dict)}`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/octet-stream' },
+    body: buffer,
+  });
+  if (response.status < 400) {
+    return {
+      statusCode: response.status,
+      key,
+      name,
+    };
+  }
+  throw new ServerError(response.status);
+}
+
+
 export {
   PATH,
   LIST_PATH,
@@ -164,4 +196,6 @@ export {
   batchDeleteUser,
   queryUser,
   countUser,
+  downloadUserAttachment,
+  uploadUserAttachment,
 };

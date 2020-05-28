@@ -231,7 +231,7 @@
     ::v-deep.cell-full {
         width: 100%;
 
-        > input {
+        > input, select {
             width: 0;
             flex-grow: 1;
             flex-shrink: 1;

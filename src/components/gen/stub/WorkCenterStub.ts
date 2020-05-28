@@ -82,7 +82,7 @@ async function updateWorkCenterSafely(bean: WorkCenter, mask?: WorkCenterMask): 
 }
 
 async function batchUpdateWorkCenter(beans: Array<WorkCenter>, mask?: WorkCenterMask): Promise<Array<{ statusCode: number; workCenter: (WorkCenter) }>> {
-  return await Promise.all(beans.map((v) => updateWorkCenterSafely(v)));
+  return await Promise.all(beans.map((v) => updateWorkCenterSafely(v, mask)));
 }
 
 async function deleteWorkCenter(key: { wcmcu: string }): Promise<{ statusCode: number; key: { wcmcu: string } }> {
@@ -147,7 +147,39 @@ async function countWorkCenter(options: {filter?: FilterLogicExpr}): Promise<{ s
   throw new ServerError(response.status);
 }
 
-// todo attachments
+function downloadWorkCenterAttachment(
+  key: { wcmcu: string },
+  name?: string, uuid?: string,
+): string {
+  const dict = Object();
+  dict.name = name;
+  dict.uuid = uuid;
+  return `${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.wcmcu}${parameters(dict)}`;
+}
+
+async function uploadWorkCenterAttachment(
+  key: { wcmcu: string },
+  buffer: ArrayBuffer, name?: string,
+): Promise<{ statusCode: number; key: { wcmcu: string }; name?: string }> {
+  const dict = Object();
+  dict.name = name;
+  const response = await fetch(`${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.wcmcu}${parameters(dict)}`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/octet-stream' },
+    body: buffer,
+  });
+  if (response.status < 400) {
+    return {
+      statusCode: response.status,
+      key,
+      name,
+    };
+  }
+  throw new ServerError(response.status);
+}
+
+
 export {
   PATH,
   LIST_PATH,
@@ -164,4 +196,6 @@ export {
   batchDeleteWorkCenter,
   queryWorkCenter,
   countWorkCenter,
+  downloadWorkCenterAttachment,
+  uploadWorkCenterAttachment,
 };

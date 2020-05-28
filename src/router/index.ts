@@ -8,6 +8,7 @@ import {ROLE_SPEC} from "@/components/gen/spec/RoleSpec";
 import {PRIVILEGE_SPEC} from "@/components/gen/spec/PrivilegeSpec";
 import {MAINTENANCETYPE_SPEC} from "@/components/gen/spec/MaintenanceTypeSpec";
 import {ENUMTYPE_SPEC} from "@/components/gen/spec/EnumTypeSpec";
+import {TEMPLATE_SPEC} from "@/components/gen/spec/TemplateSpec";
 
 Vue.use(VueRouter);
 
@@ -78,6 +79,34 @@ const routes = [{
     name: 'enum-type-add',
     path: '/enum-type-add',
     component: () => import('@/views/enum-type-add.vue')
+}, {
+    name: 'template-list',
+    path: '/template-list',
+    component: () => import('@/views/template-list.vue'),
+    props: (route: Route) => Object({
+        initFilterItemsModel: stringToFilterItemsModel(TEMPLATE_SPEC, route.query['filter'] as string),
+        initSortModel: stringToSortModel(route.query['sort'] as string),
+        initPageSize: stringToNumber(route.query['page-size'] as string),
+        initPageNumber: stringToNumber(route.query['page-number'] as string)
+    })
+}, {
+    name: 'template-update',
+    path: '/template-update/:ttid',
+    component: () => import('@/views/template-update.vue'),
+    props: (route: Route) => Object({
+        initTtid: stringToNumber(route.params['ttid'] as string)
+    })
+}, {
+    name: 'template-add',
+    path: '/template-add',
+    component: () => import('@/views/template-add.vue')
+}, {
+    name: 'template-procedure-update',
+    path: '/template-procedure-update/:tpid',
+    component: () => import('@/views/template-procedure-update.vue'),
+    props: (route: Route) => Object({
+        initTpid: stringToNumber(route.params['tpid'] as string)
+    })
 }, {
     name: 'user-list',
     path: '/user-list',

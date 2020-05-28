@@ -38,7 +38,7 @@
             try {
                 const {inspectionType} = await addInspectionType(this.inspectionType);
                 this.inspectionType = inspectionType;
-                await this.$router.replace({path: `inspection-type-update/${this.inspectionType.itid}?uuid=${uuid()}`}, () => undefined, () => undefined);
+                await this.$router.replace({path: `/inspection-type-update/${this.inspectionType.itid}?uuid=${uuid()}`}, () => undefined, () => undefined);
             } catch (e) {
                 this.errorsModel.set(new PacErrorObj('add', {
                     subject: '远程服务器错误',

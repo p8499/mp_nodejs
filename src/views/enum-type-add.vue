@@ -39,7 +39,7 @@
             try {
                 const {enumType} = await addEnumType(this.enumType);
                 this.enumType = enumType;
-                await this.$router.replace({path: `enum-type-update/${this.enumType.etid}?uuid=${uuid()}`}, () => undefined, () => undefined);
+                await this.$router.replace({path: `/enum-type-update/${this.enumType.etid}?uuid=${uuid()}`}, () => undefined, () => undefined);
             } catch (e) {
                 this.errorsModel.set(new PacErrorObj('add', {
                     subject: '远程服务器错误',

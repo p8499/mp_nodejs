@@ -82,7 +82,7 @@ async function updateCrewUserSafely(bean: CrewUser, mask?: CrewUserMask): Promis
 }
 
 async function batchUpdateCrewUser(beans: Array<CrewUser>, mask?: CrewUserMask): Promise<Array<{ statusCode: number; crewUser: (CrewUser) }>> {
-  return await Promise.all(beans.map((v) => updateCrewUserSafely(v)));
+  return await Promise.all(beans.map((v) => updateCrewUserSafely(v, mask)));
 }
 
 async function deleteCrewUser(key: { cuid: number }): Promise<{ statusCode: number; key: { cuid: number } }> {
@@ -147,7 +147,39 @@ async function countCrewUser(options: {filter?: FilterLogicExpr}): Promise<{ sta
   throw new ServerError(response.status);
 }
 
-// todo attachments
+function downloadCrewUserAttachment(
+  key: { cuid: number },
+  name?: string, uuid?: string,
+): string {
+  const dict = Object();
+  dict.name = name;
+  dict.uuid = uuid;
+  return `${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.cuid.toString()}${parameters(dict)}`;
+}
+
+async function uploadCrewUserAttachment(
+  key: { cuid: number },
+  buffer: ArrayBuffer, name?: string,
+): Promise<{ statusCode: number; key: { cuid: number }; name?: string }> {
+  const dict = Object();
+  dict.name = name;
+  const response = await fetch(`${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.cuid.toString()}${parameters(dict)}`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/octet-stream' },
+    body: buffer,
+  });
+  if (response.status < 400) {
+    return {
+      statusCode: response.status,
+      key,
+      name,
+    };
+  }
+  throw new ServerError(response.status);
+}
+
+
 export {
   PATH,
   LIST_PATH,
@@ -164,4 +196,6 @@ export {
   batchDeleteCrewUser,
   queryCrewUser,
   countCrewUser,
+  downloadCrewUserAttachment,
+  uploadCrewUserAttachment,
 };

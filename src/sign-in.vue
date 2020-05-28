@@ -13,8 +13,8 @@
                     <div>
                         <span style="margin-left: 60px;">登录</span>
                     </div>
-                    <pac-select-string style="margin-top: 8px;" :disabled="false"
-                                       label="方式" v-model="from" :values="fromValues"/>
+                    <pac-select-string style="margin-top: 8px;" :required="true" :disabled="false"
+                                       label="方式" v-model="from" :values="() => fromValues"/>
                     <pac-input v-if="from === 'an8'" style="margin-top: 8px;"
                                :spec="spec.fields.usan8" v-model="an8" :suppressSelect="true"/>
                     <pac-input v-if="from === 'cell'" style="margin-top: 8px;"

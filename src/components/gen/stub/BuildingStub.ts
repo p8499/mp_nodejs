@@ -82,7 +82,7 @@ async function updateBuildingSafely(bean: Building, mask?: BuildingMask): Promis
 }
 
 async function batchUpdateBuilding(beans: Array<Building>, mask?: BuildingMask): Promise<Array<{ statusCode: number; building: (Building) }>> {
-  return await Promise.all(beans.map((v) => updateBuildingSafely(v)));
+  return await Promise.all(beans.map((v) => updateBuildingSafely(v, mask)));
 }
 
 async function deleteBuilding(key: { mcmcu: string }): Promise<{ statusCode: number; key: { mcmcu: string } }> {
@@ -147,7 +147,39 @@ async function countBuilding(options: {filter?: FilterLogicExpr}): Promise<{ sta
   throw new ServerError(response.status);
 }
 
-// todo attachments
+function downloadBuildingAttachment(
+  key: { mcmcu: string },
+  name?: string, uuid?: string,
+): string {
+  const dict = Object();
+  dict.name = name;
+  dict.uuid = uuid;
+  return `${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.mcmcu}${parameters(dict)}`;
+}
+
+async function uploadBuildingAttachment(
+  key: { mcmcu: string },
+  buffer: ArrayBuffer, name?: string,
+): Promise<{ statusCode: number; key: { mcmcu: string }; name?: string }> {
+  const dict = Object();
+  dict.name = name;
+  const response = await fetch(`${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.mcmcu}${parameters(dict)}`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/octet-stream' },
+    body: buffer,
+  });
+  if (response.status < 400) {
+    return {
+      statusCode: response.status,
+      key,
+      name,
+    };
+  }
+  throw new ServerError(response.status);
+}
+
+
 export {
   PATH,
   LIST_PATH,
@@ -164,4 +196,6 @@ export {
   batchDeleteBuilding,
   queryBuilding,
   countBuilding,
+  downloadBuildingAttachment,
+  uploadBuildingAttachment,
 };

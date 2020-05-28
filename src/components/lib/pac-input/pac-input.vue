@@ -55,7 +55,7 @@
         @Prop({type: Object, required: true})
         spec!: FieldSpec;
 
-        @Prop({type: Boolean, required: false})
+        @Prop({type: Boolean, required: false, default: undefined})
         required?: boolean;
 
         @Prop({type: Boolean, required: false, default: false})

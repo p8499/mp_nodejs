@@ -1,16 +1,18 @@
 <template>
     <pac-select-number v-if="['Integer','Double'].includes(spec.javaType)"
-                       :label="label === undefined? spec.description : label" :required="required"
+                       :label="label === undefined? spec.description : label"
+                       :required="required === undefined? spec.notNull : required"
                        :disabled="disabled"
                        :value="value" @input="$emit('input', $event)"
                        @input:error="$emit('input:error', $event)"
-                       :values="values"/>
+                       :values="() => values"/>
     <pac-select-string v-else-if="['String'].includes(spec.javaType)"
-                       :label="label === undefined? spec.description : label" :required="required"
+                       :label="label === undefined? spec.description : label"
+                       :required="required === undefined? spec.notNull : required"
                        :disabled="disabled"
                        :value="value" @input="$emit('input', $event)"
                        @input:error="$emit('input:error', $event)"
-                       :values="values"/>
+                       :values="() => values"/>
 </template>
 
 <script lang="ts">
@@ -27,8 +29,8 @@
         @Prop({type: Object, required: true})
         spec!: FieldSpec;
 
-        @Prop({type: Boolean, required: false, default: false})
-        required!: boolean;
+        @Prop({type: Boolean, required: false,default:undefined})
+        required?: boolean;
 
         @Prop({type: Boolean, required: false, default: false})
         disabled!: boolean;

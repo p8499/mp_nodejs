@@ -1,0 +1,44 @@
+/*pac-input组件*/
+div.pac-textarea {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: stretch;
+  align-items: center;
+
+  /*输入框label*/
+  > label {
+    > span {
+      display: inline-block;
+      text-align: start;
+      width: 120px;
+      font-size: 11px;
+      color: #454545;
+      white-space: nowrap;
+
+      &.no-label {
+        display: none;
+      }
+    }
+  }
+
+  /*输入框*/
+  > textarea {
+    width: 120px;
+    height: 14px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #aeb4bd #e0e3e8 #e0e3e8 #aeb4bd;
+    padding: 1px 4px 1px 4px;
+    resize: none;
+    font-size: 8pt;
+
+    &.right {
+      text-align: right;
+    }
+
+    &.error {
+      border-color: rgb(255, 0, 0);
+    }
+  }
+}

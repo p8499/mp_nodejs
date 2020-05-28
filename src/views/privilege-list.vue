@@ -16,7 +16,7 @@
                    :selection="selection" @input:selection="selection = $event"
                    @refresh="query()">
             <template v-slot:prid="data">
-                <router-link :to="{path: `privilege-update/${data.element.prid}`}">
+                <router-link :to="{path: `/privilege-update/${data.element.prid}`}">
                     {{data.element.prid}}
                 </router-link>
             </template>
@@ -119,7 +119,7 @@
         }
 
         add(): void {
-            this.$router.push('privilege-add');
+            this.$router.push('/privilege-add');
         }
 
         get url(): string {

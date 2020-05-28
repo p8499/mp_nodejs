@@ -28,6 +28,10 @@ import PacButton from '@/components/lib/pac-button/pac-button.vue';
 import PacSelectNumber from "@/components/lib/pac-select/pac-select-number.vue";
 import PacSelectString from "@/components/lib/pac-select/pac-select-string.vue";
 import PacSelect from "@/components/lib/pac-select/pac-select.vue";
+import PacTextareaString from "@/components/lib/pac-textarea/pac-textarea-string.vue";
+import PacTextarea from "@/components/lib/pac-textarea/pac-textarea.vue";
+import PacFileRaw from "@/components/lib/pac-file/pac-file-raw.vue";
+import PacImage from "@/components/lib/pac-image/pac-image.vue";
 
 import App from "@/app.vue";
 import SelectRoid from "@/components/select/select-roid.vue";
@@ -72,6 +76,10 @@ Vue.component('pac-button', PacButton);
 Vue.component('pac-select-number', PacSelectNumber);
 Vue.component('pac-select-string', PacSelectString);
 Vue.component('pac-select', PacSelect);
+Vue.component('pac-textarea-string', PacTextareaString);
+Vue.component('pac-textarea', PacTextarea);
+Vue.component('pac-file-raw', PacFileRaw);
+Vue.component('pac-image', PacImage);
 
 Vue.component('select-roid', SelectRoid);
 Object.defineProperty(ROLE_SPEC.fields.roid, 'select', {value: 'select-roid'});

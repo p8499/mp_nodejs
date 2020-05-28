@@ -82,7 +82,7 @@ async function updateRoomSafely(bean: Room, mask?: RoomMask): Promise<{ statusCo
 }
 
 async function batchUpdateRoom(beans: Array<Room>, mask?: RoomMask): Promise<Array<{ statusCode: number; room: (Room) }>> {
-  return await Promise.all(beans.map((v) => updateRoomSafely(v)));
+  return await Promise.all(beans.map((v) => updateRoomSafely(v, mask)));
 }
 
 async function deleteRoom(key: { rmid: number }): Promise<{ statusCode: number; key: { rmid: number } }> {
@@ -147,7 +147,39 @@ async function countRoom(options: {filter?: FilterLogicExpr}): Promise<{ statusC
   throw new ServerError(response.status);
 }
 
-// todo attachments
+function downloadRoomAttachment(
+  key: { rmid: number },
+  name?: string, uuid?: string,
+): string {
+  const dict = Object();
+  dict.name = name;
+  dict.uuid = uuid;
+  return `${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.rmid.toString()}${parameters(dict)}`;
+}
+
+async function uploadRoomAttachment(
+  key: { rmid: number },
+  buffer: ArrayBuffer, name?: string,
+): Promise<{ statusCode: number; key: { rmid: number }; name?: string }> {
+  const dict = Object();
+  dict.name = name;
+  const response = await fetch(`${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.rmid.toString()}${parameters(dict)}`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/octet-stream' },
+    body: buffer,
+  });
+  if (response.status < 400) {
+    return {
+      statusCode: response.status,
+      key,
+      name,
+    };
+  }
+  throw new ServerError(response.status);
+}
+
+
 export {
   PATH,
   LIST_PATH,
@@ -164,4 +196,6 @@ export {
   batchDeleteRoom,
   queryRoom,
   countRoom,
+  downloadRoomAttachment,
+  uploadRoomAttachment,
 };

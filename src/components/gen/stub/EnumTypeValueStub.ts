@@ -82,7 +82,7 @@ async function updateEnumTypeValueSafely(bean: EnumTypeValue, mask?: EnumTypeVal
 }
 
 async function batchUpdateEnumTypeValue(beans: Array<EnumTypeValue>, mask?: EnumTypeValueMask): Promise<Array<{ statusCode: number; enumTypeValue: (EnumTypeValue) }>> {
-  return await Promise.all(beans.map((v) => updateEnumTypeValueSafely(v)));
+  return await Promise.all(beans.map((v) => updateEnumTypeValueSafely(v, mask)));
 }
 
 async function deleteEnumTypeValue(key: { evid: number }): Promise<{ statusCode: number; key: { evid: number } }> {
@@ -147,7 +147,39 @@ async function countEnumTypeValue(options: {filter?: FilterLogicExpr}): Promise<
   throw new ServerError(response.status);
 }
 
-// todo attachments
+function downloadEnumTypeValueAttachment(
+  key: { evid: number },
+  name?: string, uuid?: string,
+): string {
+  const dict = Object();
+  dict.name = name;
+  dict.uuid = uuid;
+  return `${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.evid.toString()}${parameters(dict)}`;
+}
+
+async function uploadEnumTypeValueAttachment(
+  key: { evid: number },
+  buffer: ArrayBuffer, name?: string,
+): Promise<{ statusCode: number; key: { evid: number }; name?: string }> {
+  const dict = Object();
+  dict.name = name;
+  const response = await fetch(`${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.evid.toString()}${parameters(dict)}`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/octet-stream' },
+    body: buffer,
+  });
+  if (response.status < 400) {
+    return {
+      statusCode: response.status,
+      key,
+      name,
+    };
+  }
+  throw new ServerError(response.status);
+}
+
+
 export {
   PATH,
   LIST_PATH,
@@ -164,4 +196,6 @@ export {
   batchDeleteEnumTypeValue,
   queryEnumTypeValue,
   countEnumTypeValue,
+  downloadEnumTypeValueAttachment,
+  uploadEnumTypeValueAttachment,
 };

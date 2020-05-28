@@ -1,4 +1,5 @@
 import {Bean} from "@/components/gen/bean";
+import {Vue} from "vue-property-decorator";
 
 type Status = 'add' | 'discard' | 'update' | 'delete' | 'deleted' | null;
 
@@ -7,38 +8,43 @@ class Editable<B> {
     }
 
     update(): void {
+        console.log('update');
         if (this.status === null)
-            this.status = 'update';
+            Vue.set(this, 'status', 'update');
     }
 
     delete(): void {
+        console.log('delete');
         if (this.status === 'update' || this.status === null)
-            this.status = 'delete';
+            Vue.set(this, 'status', 'delete');
         else if (this.status === 'add')
-            this.status = 'discard';
+            Vue.set(this, 'status', 'discard');
     }
 
     afterAdd(successful: boolean, added?: B): void {
+        console.log('afterAdd');
         if (successful) {
             this.status = null;
             if (added !== undefined)
-                this.rawItem = added;
+                Vue.set(this, 'rawItem', added);
         }
     }
 
     afterUpdate(successful: boolean, updated?: B): void {
+        console.log('afterUpdate');
         if (successful) {
             this.status = null;
             if (updated !== undefined)
-                this.rawItem = updated;
+                Vue.set(this, 'rawItem', updated);
         }
     }
 
     afterDelete(successful: boolean): void {
+        console.log('afterDelete');
         if (successful)
-            this.status = 'deleted';
+            Vue.set(this, 'status', 'deleted');
         else
-            this.status = null;
+            Vue.set(this, 'status', null);
     }
 }
 

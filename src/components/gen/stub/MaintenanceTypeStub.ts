@@ -82,7 +82,7 @@ async function updateMaintenanceTypeSafely(bean: MaintenanceType, mask?: Mainten
 }
 
 async function batchUpdateMaintenanceType(beans: Array<MaintenanceType>, mask?: MaintenanceTypeMask): Promise<Array<{ statusCode: number; maintenanceType: (MaintenanceType) }>> {
-  return await Promise.all(beans.map((v) => updateMaintenanceTypeSafely(v)));
+  return await Promise.all(beans.map((v) => updateMaintenanceTypeSafely(v, mask)));
 }
 
 async function deleteMaintenanceType(key: { mtid: string }): Promise<{ statusCode: number; key: { mtid: string } }> {
@@ -147,7 +147,39 @@ async function countMaintenanceType(options: {filter?: FilterLogicExpr}): Promis
   throw new ServerError(response.status);
 }
 
-// todo attachments
+function downloadMaintenanceTypeAttachment(
+  key: { mtid: string },
+  name?: string, uuid?: string,
+): string {
+  const dict = Object();
+  dict.name = name;
+  dict.uuid = uuid;
+  return `${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.mtid}${parameters(dict)}`;
+}
+
+async function uploadMaintenanceTypeAttachment(
+  key: { mtid: string },
+  buffer: ArrayBuffer, name?: string,
+): Promise<{ statusCode: number; key: { mtid: string }; name?: string }> {
+  const dict = Object();
+  dict.name = name;
+  const response = await fetch(`${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.mtid}${parameters(dict)}`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/octet-stream' },
+    body: buffer,
+  });
+  if (response.status < 400) {
+    return {
+      statusCode: response.status,
+      key,
+      name,
+    };
+  }
+  throw new ServerError(response.status);
+}
+
+
 export {
   PATH,
   LIST_PATH,
@@ -164,4 +196,6 @@ export {
   batchDeleteMaintenanceType,
   queryMaintenanceType,
   countMaintenanceType,
+  downloadMaintenanceTypeAttachment,
+  uploadMaintenanceTypeAttachment,
 };

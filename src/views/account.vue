@@ -17,24 +17,30 @@
                             text="更改" @input="update()"/>
             </template>
             <template v-slot:1>
+                <img :src="downloadUserAttachment(currentUser, undefined, imageUuid)" alt=""/>
+                <pac-file-raw style="margin-top: 14px"
+                              label="上传头像" :type="['image', 'audio']" :multiple="false" :disabled="false"
+                              @upload="uploadUserAttachment($event[0])"/>
+            </template>
+            <template v-slot:2>
                 <pac-input-string label="输入原密码" :required="false" :disabled="false" :password="true"
                                   :length="16" nullOrBlank="blank" v-model="old"
-                                  @input:error="errorsModel.set($event.setPath('1'))"
+                                  @input:error="errorsModel.set($event.setPath('2'))"
                                   :validate="async () => null"/>
                 <pac-input-string style="margin-top: 14px"
                                   label="输入新密码" :required="false" :disabled="false" :password="true"
                                   :length="16" nullOrBlank="blank" v-model="new1"
-                                  @input:error="errorsModel.set($event.setPath('1'))"
+                                  @input:error="errorsModel.set($event.setPath('2'))"
                                   :validate="async () => null"/>
                 <pac-input-string style="margin-top: 14px"
                                   label="再次输入新密码" :required="false" :disabled="false" :password="true"
                                   :length="16" nullOrBlank="blank" v-model="new2"
-                                  @input:error="errorsModel.set($event.setPath('1'))"
+                                  @input:error="errorsModel.set($event.setPath('2'))"
                                   :validate="async () => null"/>
                 <pac-button style="margin-top: 14px"
                             text="更改" @input="password()"/>
             </template>
-            <template v-slot:2>
+            <template v-slot:3>
                 <pac-table style="max-width: 100%; max-height: 480px;"
                            :model="userRoleTableModel" :list="userRoleList" :contentRange="userRoleContentRange"
                            :pageSize="userRolePageSize" @input:pageSize="userRolePageSize = $event"
@@ -47,7 +53,7 @@
                     <template v-slot:urroname="data">{{data.element.urroname}}</template>
                 </pac-table>
             </template>
-            <template v-slot:3>
+            <template v-slot:4>
                 <pac-table style="max-width: 100%; max-height: 480px;"
                            :model="crewUserTableModel" :list="crewUserList" :contentRange="crewUserContentRange"
                            :pageSize="crewUserPageSize" @input:pageSize="crewUserPageSize = $event"
@@ -69,7 +75,7 @@
     import {Component} from "vue-property-decorator";
     import {PacErrorModel, PacErrorObj, PacErrorsModel} from "@/components/lib/pac-errors/pac-errors-model";
     import {User} from "@/components/gen/bean/User";
-    import {getUser, updateUser} from "@/components/gen/stub/UserStub";
+    import {downloadUserAttachment, getUser, updateUser, uploadUserAttachment} from "@/components/gen/stub/UserStub";
     import Common from "@/common";
     import {UserRole} from "@/components/gen/bean/UserRole";
     import {queryUserRole} from "@/components/gen/stub/UserRoleStub";
@@ -85,6 +91,7 @@
     import {FilterLogicExpr} from "@/components/gen/filter";
     import {queryCrewUser} from "@/components/gen/stub/CrewUserStub";
     import {PacProgressModel} from "@/components/lib/pac-form/pac-form-model";
+    import {uuid} from "uuidv4";
 
     @Component({name: 'account'})
     export default class Account extends Common {
@@ -92,11 +99,14 @@
         loading = true;
         progressModel = new PacProgressModel();
         errorsModel = new PacErrorsModel();
-        tabs: Array<string> = ['个人信息', '修改密码', '拥有角色', '所属班组'];
+        tabs: Array<string> = ['个人信息', '设置头像', '修改密码', '拥有角色', '所属班组'];
         selectedTab = 0;
 
         userSpec = USER_SPEC;
         user = new User();
+
+        downloadUserAttachment = downloadUserAttachment;
+        imageUuid = "";
 
         old = '';
         new1 = '';
@@ -159,6 +169,23 @@
                     this.user = user;
                 } catch (e) {
                     this.errorsModel.set(new PacErrorObj('update', {
+                        subject: '远程服务器错误',
+                        content: `远程服务器状态：${e.statusCode}`
+                    }));
+                } finally {
+                    this.progressModel.stop(progress);
+                }
+            }
+        }
+
+        async uploadUserAttachment(file: File): Promise<void> {
+            if (this.currentUser !== null && this.currentUser.usid !== null) {
+                const progress = this.progressModel.start();
+                try {
+                    await uploadUserAttachment({usid: this.currentUser.usid}, await file.arrayBuffer());
+                    this.imageUuid = uuid();
+                } catch (e) {
+                    this.errorsModel.set(new PacErrorObj('uploadUserAttachment', {
                         subject: '远程服务器错误',
                         content: `远程服务器状态：${e.statusCode}`
                     }));

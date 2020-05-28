@@ -16,12 +16,14 @@
                    :selection="selection" @input:selection="selection = $event"
                    @refresh="query()">
             <template v-slot:usname="data">
-                <router-link :to="{path: `user-update/${data.element.usid}`}">
+                <router-link :to="{path: `/user-update/${data.element.usid}`}">
                     {{data.element.usname}}
                 </router-link>
+                <pac-image style="margin-left: 8px;" :size="2" shape="round"
+                           :sources="async () => [downloadUserAttachment(data.element, undefined, imageUuid)]"/>
             </template>
             <template v-slot:usan8="data">
-                <div class="cell-right"> {{data.element.usan8}}</div>
+                <div class="cell-right">{{data.element.usan8}}</div>
             </template>
             <template v-slot:uscell="data">{{data.element.uscell}}</template>
             <template v-slot:usmail="data">{{data.element.usmail}}</template>
@@ -41,9 +43,10 @@
     import {SortModel} from "@/components/lib/pac-table/sort-model";
     import {User} from "@/components/gen/bean/User";
     import {ContentRange} from "@/components/gen/range";
-    import {batchDeleteUser, queryUser} from "@/components/gen/stub/UserStub";
+    import {batchDeleteUser, downloadUserAttachment, queryUser} from "@/components/gen/stub/UserStub";
     import {parameters} from "@/components/gen/common";
     import {filterItemsModelToString, numberToString, sortModelToString, subtract} from "@/components/lib/pac-common";
+    import {uuid} from "uuidv4";
 
     @Component({name: 'user-list'})
     export default class UserList extends Common {
@@ -78,6 +81,8 @@
         list = new Array<User>();
         selection = new Array<User>();
         contentRange = new ContentRange();
+        downloadUserAttachment = downloadUserAttachment;
+        imageUuid = "";
 
         async created(): Promise<void> {
             await this.query();
@@ -95,6 +100,7 @@
                 });
                 this.list = list;
                 this.contentRange = contentRange;
+                this.imageUuid = uuid();
             } catch (e) {
                 this.errorsModel.set(new PacErrorObj('query', {
                     subject: '远程服务器错误',
@@ -127,7 +133,7 @@
         }
 
         add(): void {
-            this.$router.push('user-add');
+            this.$router.push('/user-add');
         }
 
         get url(): string {
@@ -147,5 +153,12 @@
         height: fit-content;
         vertical-align: center;
         text-align: right;
+    }
+
+    .cell-center {
+        width: 100%;
+        height: fit-content;
+        vertical-align: center;
+        text-align: center;
     }
 </style>

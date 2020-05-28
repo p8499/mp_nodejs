@@ -16,7 +16,7 @@
                    :selection="selection" @input:selection="selection = $event"
                    @refresh="query()">
             <template v-slot:etid="data">
-                <router-link :to="{path: `enum-type-update/${data.element.etid}`}">
+                <router-link :to="{path: `/enum-type-update/${data.element.etid}`}">
                     {{data.element.etid}}
                 </router-link>
             </template>
@@ -119,7 +119,7 @@
         }
 
         add(): void {
-            this.$router.push('enum-type-add');
+            this.$router.push('/enum-type-add');
         }
 
         get url(): string {

@@ -82,7 +82,7 @@ async function updatePrivilegeSafely(bean: Privilege, mask?: PrivilegeMask): Pro
 }
 
 async function batchUpdatePrivilege(beans: Array<Privilege>, mask?: PrivilegeMask): Promise<Array<{ statusCode: number; privilege: (Privilege) }>> {
-  return await Promise.all(beans.map((v) => updatePrivilegeSafely(v)));
+  return await Promise.all(beans.map((v) => updatePrivilegeSafely(v, mask)));
 }
 
 async function deletePrivilege(key: { prid: string }): Promise<{ statusCode: number; key: { prid: string } }> {
@@ -147,7 +147,39 @@ async function countPrivilege(options: {filter?: FilterLogicExpr}): Promise<{ st
   throw new ServerError(response.status);
 }
 
-// todo attachments
+function downloadPrivilegeAttachment(
+  key: { prid: string },
+  name?: string, uuid?: string,
+): string {
+  const dict = Object();
+  dict.name = name;
+  dict.uuid = uuid;
+  return `${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.prid}${parameters(dict)}`;
+}
+
+async function uploadPrivilegeAttachment(
+  key: { prid: string },
+  buffer: ArrayBuffer, name?: string,
+): Promise<{ statusCode: number; key: { prid: string }; name?: string }> {
+  const dict = Object();
+  dict.name = name;
+  const response = await fetch(`${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.prid}${parameters(dict)}`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/octet-stream' },
+    body: buffer,
+  });
+  if (response.status < 400) {
+    return {
+      statusCode: response.status,
+      key,
+      name,
+    };
+  }
+  throw new ServerError(response.status);
+}
+
+
 export {
   PATH,
   LIST_PATH,
@@ -164,4 +196,6 @@ export {
   batchDeletePrivilege,
   queryPrivilege,
   countPrivilege,
+  downloadPrivilegeAttachment,
+  uploadPrivilegeAttachment,
 };

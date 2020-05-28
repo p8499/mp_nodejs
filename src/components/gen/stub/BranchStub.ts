@@ -82,7 +82,7 @@ async function updateBranchSafely(bean: Branch, mask?: BranchMask): Promise<{ st
 }
 
 async function batchUpdateBranch(beans: Array<Branch>, mask?: BranchMask): Promise<Array<{ statusCode: number; branch: (Branch) }>> {
-  return await Promise.all(beans.map((v) => updateBranchSafely(v)));
+  return await Promise.all(beans.map((v) => updateBranchSafely(v, mask)));
 }
 
 async function deleteBranch(key: { bpmcu: string }): Promise<{ statusCode: number; key: { bpmcu: string } }> {
@@ -147,7 +147,39 @@ async function countBranch(options: {filter?: FilterLogicExpr}): Promise<{ statu
   throw new ServerError(response.status);
 }
 
-// todo attachments
+function downloadBranchAttachment(
+  key: { bpmcu: string },
+  name?: string, uuid?: string,
+): string {
+  const dict = Object();
+  dict.name = name;
+  dict.uuid = uuid;
+  return `${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.bpmcu}${parameters(dict)}`;
+}
+
+async function uploadBranchAttachment(
+  key: { bpmcu: string },
+  buffer: ArrayBuffer, name?: string,
+): Promise<{ statusCode: number; key: { bpmcu: string }; name?: string }> {
+  const dict = Object();
+  dict.name = name;
+  const response = await fetch(`${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.bpmcu}${parameters(dict)}`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/octet-stream' },
+    body: buffer,
+  });
+  if (response.status < 400) {
+    return {
+      statusCode: response.status,
+      key,
+      name,
+    };
+  }
+  throw new ServerError(response.status);
+}
+
+
 export {
   PATH,
   LIST_PATH,
@@ -164,4 +196,6 @@ export {
   batchDeleteBranch,
   queryBranch,
   countBranch,
+  downloadBranchAttachment,
+  uploadBranchAttachment,
 };

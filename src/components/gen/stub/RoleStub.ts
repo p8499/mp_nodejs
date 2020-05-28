@@ -82,7 +82,7 @@ async function updateRoleSafely(bean: Role, mask?: RoleMask): Promise<{ statusCo
 }
 
 async function batchUpdateRole(beans: Array<Role>, mask?: RoleMask): Promise<Array<{ statusCode: number; role: (Role) }>> {
-  return await Promise.all(beans.map((v) => updateRoleSafely(v)));
+  return await Promise.all(beans.map((v) => updateRoleSafely(v, mask)));
 }
 
 async function deleteRole(key: { roid: string }): Promise<{ statusCode: number; key: { roid: string } }> {
@@ -147,7 +147,39 @@ async function countRole(options: {filter?: FilterLogicExpr}): Promise<{ statusC
   throw new ServerError(response.status);
 }
 
-// todo attachments
+function downloadRoleAttachment(
+  key: { roid: string },
+  name?: string, uuid?: string,
+): string {
+  const dict = Object();
+  dict.name = name;
+  dict.uuid = uuid;
+  return `${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.roid}${parameters(dict)}`;
+}
+
+async function uploadRoleAttachment(
+  key: { roid: string },
+  buffer: ArrayBuffer, name?: string,
+): Promise<{ statusCode: number; key: { roid: string }; name?: string }> {
+  const dict = Object();
+  dict.name = name;
+  const response = await fetch(`${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.roid}${parameters(dict)}`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/octet-stream' },
+    body: buffer,
+  });
+  if (response.status < 400) {
+    return {
+      statusCode: response.status,
+      key,
+      name,
+    };
+  }
+  throw new ServerError(response.status);
+}
+
+
 export {
   PATH,
   LIST_PATH,
@@ -164,4 +196,6 @@ export {
   batchDeleteRole,
   queryRole,
   countRole,
+  downloadRoleAttachment,
+  uploadRoleAttachment,
 };

@@ -6,6 +6,7 @@ export default [
             new PacMenuItemModel('巡视类型', 'inspection-type-list'),
             new PacMenuItemModel('维保类型', 'maintenance-type-list'),
             new PacMenuItemModel('枚举类型', 'enum-type-list'),
+            new PacMenuItemModel('模板', 'template-list'),
         )
     ),
     new PacMenuItemModel('权限管理').append(

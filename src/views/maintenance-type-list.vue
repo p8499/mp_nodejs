@@ -16,7 +16,7 @@
                    :selection="selection" @input:selection="selection = $event"
                    @refresh="query()">
             <template v-slot:mtid="data">
-                <router-link :to="{path: `maintenance-type-update/${data.element.mtid}`}">
+                <router-link :to="{path: `/maintenance-type-update/${data.element.mtid}`}">
                     {{data.element.mtid}}
                 </router-link>
             </template>
@@ -119,7 +119,7 @@
         }
 
         add(): void {
-            this.$router.push('maintenance-type-add');
+            this.$router.push('/maintenance-type-add');
         }
 
         get url(): string {

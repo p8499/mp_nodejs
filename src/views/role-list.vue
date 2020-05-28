@@ -16,7 +16,7 @@
                    :selection="selection" @input:selection="selection = $event"
                    @refresh="query()">
             <template v-slot:roid="data">
-                <router-link :to="{path: `role-update/${data.element.roid}`}">
+                <router-link :to="{path: `/role-update/${data.element.roid}`}">
                     {{data.element.roid}}
                 </router-link>
             </template>
@@ -119,7 +119,7 @@
         }
 
         add(): void {
-            this.$router.push('role-add');
+            this.$router.push('/role-add');
         }
 
         get url(): string {

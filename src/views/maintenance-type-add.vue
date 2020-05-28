@@ -38,7 +38,7 @@
             try {
                 const {maintenanceType} = await addMaintenanceType(this.maintenanceType);
                 this.maintenanceType = maintenanceType;
-                await this.$router.replace({path: `maintenance-type-update/${this.maintenanceType.mtid}?uuid=${uuid()}`}, () => undefined, () => undefined);
+                await this.$router.replace({path: `/maintenance-type-update/${this.maintenanceType.mtid}?uuid=${uuid()}`}, () => undefined, () => undefined);
             } catch (e) {
                 this.errorsModel.set(new PacErrorObj('add', {
                     subject: '远程服务器错误',

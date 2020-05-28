@@ -38,7 +38,7 @@
             try {
                 const {privilege} = await addPrivilege(this.privilege);
                 this.privilege = privilege;
-                await this.$router.replace({path: `privilege-update/${this.privilege.prid}?uuid=${uuid()}`}, () => undefined, () => undefined);
+                await this.$router.replace({path: `/privilege-update/${this.privilege.prid}?uuid=${uuid()}`}, () => undefined, () => undefined);
             } catch (e) {
                 this.errorsModel.set(new PacErrorObj('add', {
                     subject: '远程服务器错误',

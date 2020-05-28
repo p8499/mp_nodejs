@@ -20,7 +20,7 @@ function parameters(dict: any): string {
   const result = Object.keys(dict)
     .filter((value) => dict[value] !== undefined)
     .map((value) => `${value}=${dict[value]}`).join('&');
-  return Object.keys(dict).length > 0 ? `?${result}` : '';
+  return Object.keys(dict).filter((v) => dict[v] !== undefined).length > 0 ? `?${result}` : '';
 }
 
 export {

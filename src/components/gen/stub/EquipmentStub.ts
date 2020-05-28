@@ -82,7 +82,7 @@ async function updateEquipmentSafely(bean: Equipment, mask?: EquipmentMask): Pro
 }
 
 async function batchUpdateEquipment(beans: Array<Equipment>, mask?: EquipmentMask): Promise<Array<{ statusCode: number; equipment: (Equipment) }>> {
-  return await Promise.all(beans.map((v) => updateEquipmentSafely(v)));
+  return await Promise.all(beans.map((v) => updateEquipmentSafely(v, mask)));
 }
 
 async function deleteEquipment(key: { eqid: number }): Promise<{ statusCode: number; key: { eqid: number } }> {
@@ -147,7 +147,39 @@ async function countEquipment(options: {filter?: FilterLogicExpr}): Promise<{ st
   throw new ServerError(response.status);
 }
 
-// todo attachments
+function downloadEquipmentAttachment(
+  key: { eqid: number },
+  name?: string, uuid?: string,
+): string {
+  const dict = Object();
+  dict.name = name;
+  dict.uuid = uuid;
+  return `${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.eqid.toString()}${parameters(dict)}`;
+}
+
+async function uploadEquipmentAttachment(
+  key: { eqid: number },
+  buffer: ArrayBuffer, name?: string,
+): Promise<{ statusCode: number; key: { eqid: number }; name?: string }> {
+  const dict = Object();
+  dict.name = name;
+  const response = await fetch(`${SERVER_PROTOCOL}//${SERVER_HOST}:${SERVER_PORT.toString()}/${SERVER_APP}/${ATTACHMENT_PATH}/${key.eqid.toString()}${parameters(dict)}`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/octet-stream' },
+    body: buffer,
+  });
+  if (response.status < 400) {
+    return {
+      statusCode: response.status,
+      key,
+      name,
+    };
+  }
+  throw new ServerError(response.status);
+}
+
+
 export {
   PATH,
   LIST_PATH,
@@ -164,4 +196,6 @@ export {
   batchDeleteEquipment,
   queryEquipment,
   countEquipment,
+  downloadEquipmentAttachment,
+  uploadEquipmentAttachment,
 };
