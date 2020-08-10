@@ -23,8 +23,8 @@
                     :label="label === undefined? spec.description : label"
                     :required="required === undefined? spec.notNull : required"
                     :disabled="disabled"
-                    :min="min === undefined? new Date(100,0,1) : min"
-                    :max="max === undefined? new Date(9999,11,31) : max"
+                    :min="min === undefined? dateMin : min"
+                    :max="max === undefined? dateMax : max"
                     :value="value" @input="$emit('input', $event)"
                     @input:error="$emit('input:error', $event)"
                     :select="spec.select === undefined || suppressSelect? null : spec.select"
@@ -33,8 +33,8 @@
                         :label="label === undefined? spec.description : label"
                         :required="required === undefined? spec.notNull : required"
                         :disabled="disabled"
-                        :min="min === undefined? new Date(100,0,1) : min"
-                        :max="max === undefined? new Date(9999,11,31) : max"
+                        :min="min === undefined? dateMin : min"
+                        :max="max === undefined? dateMax : max"
                         :value="value" @input="$emit('input', $event)"
                         @input:error="$emit('input:error', $event)"
                         :select="spec.select === undefined || suppressSelect? null : spec.select"
@@ -49,6 +49,9 @@
 
     @Component({name: 'pac-input'})
     export default class PacInput extends Vue {
+        dateMin: Date = new Date(100, 0, 1);
+        dateMax: Date = new Date(9999, 11, 31);
+
         @Prop({validator: (value) => typeof (value) === 'string' || value === null, required: false})
         label?: string | null;
 
